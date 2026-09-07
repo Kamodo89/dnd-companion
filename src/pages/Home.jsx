@@ -9,7 +9,7 @@ const CLASS_COLORS = {
   rogue: '#2c3e50', sorcerer: '#e74c3c', warlock: '#6c3483', wizard: '#2980b9', artificer: '#d35400',
 };
 
-function CharacterCard({ character, isActive, onClick }) {
+function CharacterCard({ character, isActive, onClick, onDelete }) {
   const cls = CLASSES.find(c => c.id === character.classId);
   const classColor = CLASS_COLORS[character.classId] || 'var(--color-gold-base)';
   const hpPercent = character.currentHp != null && character.maxHp
@@ -32,8 +32,14 @@ function CharacterCard({ character, isActive, onClick }) {
       <div style={{ paddingLeft: '12px' }}>
         <div className="flex items-center justify-between" style={{ marginBottom: '8px' }}>
           <div>
-            <div className="font-display text-lg" style={{ color: isActive ? 'var(--text-gold)' : 'var(--text-primary)', fontWeight: 700 }}>
+            <div className="font-display text-lg flex items-center gap-2" style={{ color: isActive ? 'var(--text-gold)' : 'var(--text-primary)', fontWeight: 700 }}>
               {character.name}
+              <button 
+                className="btn btn-sm btn-danger" 
+                style={{ padding: '2px 6px', fontSize: '10px' }}
+                onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                title="Delete Character"
+              >✕</button>
             </div>
             <div className="text-sm text-muted">
               {character.speciesName} • {cls?.name || character.classId} {character.level}
@@ -66,7 +72,7 @@ function CharacterCard({ character, isActive, onClick }) {
   );
 }
 
-function CampaignCard({ campaign, isActive, onClick }) {
+function CampaignCard({ campaign, isActive, onClick, onDelete }) {
   return (
     <div
       className={`card ${isActive ? 'card-gold' : ''}`}
@@ -74,8 +80,14 @@ function CampaignCard({ campaign, isActive, onClick }) {
       onClick={onClick}
     >
       <div className="flex items-center justify-between" style={{ marginBottom: '8px' }}>
-        <div className="font-display text-lg" style={{ color: isActive ? 'var(--text-gold)' : 'var(--text-primary)' }}>
+        <div className="font-display text-lg flex items-center gap-2" style={{ color: isActive ? 'var(--text-gold)' : 'var(--text-primary)' }}>
           🗺️ {campaign.name}
+          <button 
+            className="btn btn-sm btn-danger" 
+            style={{ padding: '2px 6px', fontSize: '10px' }}
+            onClick={(e) => { e.stopPropagation(); onDelete(); }}
+            title="Delete Campaign"
+          >✕</button>
         </div>
         {isActive && <span className="badge badge-gold">Active</span>}
       </div>
@@ -166,6 +178,11 @@ export default function Home() {
                     actions.setActiveCharacter(char.id);
                     navigate(`/characters/${char.id}`);
                   }}
+                  onDelete={() => {
+                    if (window.confirm(`Are you sure you want to delete ${char.name}?`)) {
+                      actions.deleteCharacter(char.id);
+                    }
+                  }}
                 />
               ))}
               {state.characters.length < 8 && (
@@ -207,6 +224,11 @@ export default function Home() {
                   onClick={() => {
                     actions.setActiveCampaign(campaign.id);
                     navigate('/campaign');
+                  }}
+                  onDelete={() => {
+                    if (window.confirm(`Are you sure you want to delete ${campaign.name}?`)) {
+                      actions.deleteCampaign(campaign.id);
+                    }
                   }}
                 />
               ))}
