@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { SPELLS } from '../data/spells';
+import { spells as SPELLS } from '../data/spells';
 import { WEAPONS, ARMOR, CONDITIONS, WEAPON_MASTERY } from '../data/equipment';
 
 const Compendium = () => {
